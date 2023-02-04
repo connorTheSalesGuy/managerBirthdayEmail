@@ -1,0 +1,64 @@
+const nodemailer = require("nodemailer");
+
+// Fictitious list of users
+const users = [
+  {
+    firstName: "User 1",
+    birthday: "2023-02-11",
+    managers: "Manager 1",
+    managerEmail: "manager1@example.com",
+    managerBirthdayNotification: true
+  },
+  {
+    name: "User 2",
+    birthday: "2023-02-14",
+    managers: "Manager 2",
+    managerEmail: "manager2@example.com",
+    managerBirthdayNotification: false
+  },
+  {
+    name: "User 3",
+    birthday: "2023-02-12",
+    managers: "Manager 1",
+    managerEmail: "manager1@example.com",
+    managerBirthdayNotification: true
+  },
+];
+
+const sevenDaysFromNow = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+const sevenDaysFromNowString = sevenDaysFromNow.toISOString().split("T")[0];
+
+const usersWithUpcomingBirthday = users.filter((user) => user.birthday === sevenDaysFromNowString);
+
+usersWithUpcomingBirthday.forEach((user) => {
+  if (user.managerBirthdayNotification) {
+    sendEmail(user);
+  }
+});
+
+function sendEmail(user) {
+  const transporter = nodemailer.createTransport({
+    host: "smtp.example.com",
+    port: 587,
+    secure: false,
+    auth: {
+      user: "sender@example.com",
+      pass: "sender-password"
+    }
+  });
+
+  const message = {
+    from: "no-reply@joinassembly.com",
+    to: user.managerEmail,
+    subject: `Upcoming Birthday: ${user.name}`,
+    text: `Hello ${user.manager}, just a friendly reminder that ${user.name}'s birthday is coming up on ${user.birthday}.`
+  };
+
+  transporter.sendMail(message, (error, info) => {
+    if (error) {
+      console.log(`Error sending email to ${user.manager}: ${error}`);
+    } else {
+      console.log(`Email sent to ${user.manager}: ${info.response}`);
+    }
+  });
+}
