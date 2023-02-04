@@ -54,11 +54,5 @@ function sendEmail(user) {
     text: `Hello ${user.manager}, just a friendly reminder that ${user.name}'s birthday is coming up on ${user.birthday}.`
   };
 
-  transporter.sendMail(message, (error, info) => {
-    if (error) {
-      console.log(`Error sending email to ${user.manager}: ${error}`);
-    } else {
-      console.log(`Email sent to ${user.manager}: ${info.response}`);
-    }
-  });
+ 
 }
